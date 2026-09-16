@@ -1,0 +1,310 @@
+import streamlit as st
+from datetime import datetime
+import streamlit.components.v1 as components
+from urllib.parse import quote
+
+st.set_page_config(page_title="Love Story", page_icon="💖", layout="centered")
+
+# ==============================================================================
+# CSS GIAO DIỆN & HIỆU ỨNG RƠI
+# ==============================================================================
+st.markdown(
+    """
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+    /* Nền trang */
+    .stApp {
+        background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
+    }
+
+    /* Hiệu ứng Trái tim & Hoa rơi tự do */
+    @keyframes falling {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(360deg); opacity: 0.2; }
+    }
+
+    .falling-element {
+        position: fixed;
+        top: -10%;
+        z-index: 9999;
+        user-select: none;
+        pointer-events: none;
+        animation: falling linear infinite;
+    }
+
+    .f1 { left: 5%; animation-duration: 7s; animation-delay: 0s; font-size: 24px; }
+    .f2 { left: 20%; animation-duration: 9s; animation-delay: 2s; font-size: 30px; }
+    .f3 { left: 35%; animation-duration: 6s; animation-delay: 4s; font-size: 20px; }
+    .f4 { left: 50%; animation-duration: 8s; animation-delay: 1s; font-size: 28px; }
+    .f5 { left: 65%; animation-duration: 10s; animation-delay: 3s; font-size: 22px; }
+    .f6 { left: 80%; animation-duration: 7s; animation-delay: 5s; font-size: 32px; }
+    .f7 { left: 92%; animation-duration: 9s; animation-delay: 1.5s; font-size: 26px; }
+
+    /* Ép các cột Streamlit giãn chiều cao bằng nhau */
+    [data-testid="stHorizontalBlock"] {
+        align-items: stretch !important;
+    }
+
+    .equal-card {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 2px solid rgba(255, 255, 255, 0.85);
+        border-radius: 20px;
+        padding: 20px 12px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .name-title {
+        font-family: 'Great Vibes', cursive;
+        font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+        line-height: 1.2;
+        color: #d63384;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
+        margin: 8px 0;
+        min-height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        word-break: break-word;
+    }
+
+    .heart-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 2.2rem;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.25); }
+        100% { transform: scale(1); }
+    }
+
+    .cute-quote {
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+        padding: 12px;
+        text-align: center;
+        color: #c2185b;
+        font-style: italic;
+        margin: 15px 0;
+    }
+    </style>
+
+    <!-- Biểu tượng rơi -->
+    <div class="falling-element f1">🌸</div>
+    <div class="falling-element f2">💖</div>
+    <div class="falling-element f3">🌺</div>
+    <div class="falling-element f4">💕</div>
+    <div class="falling-element f5">🌷</div>
+    <div class="falling-element f6">💝</div>
+    <div class="falling-element f7">🌹</div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Tiêu đề
+st.markdown("<h1 style='text-align: center; color: #b8004f; font-family: sans-serif;'>💖 Love Story 💖</h1>", unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <div style="text-align: center; font-size: 0.9rem; color: #7a1c4b; margin-bottom: 15px;">
+        🎵 <i>Chạm nhẹ vào bất kỳ đâu trên màn hình để bật nhạc tình yêu...</i> 🎶
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ==============================================================================
+# 1. BỐ TRÍ 2 THẺ TÊN CÂN NHAU 100% BẰNG STREAMLIT COLUMNS
+# ==============================================================================
+col1, col_heart, col2 = st.columns([4.5, 1, 4.5])
+
+with col1:
+    st.markdown(
+        """
+        <div class="equal-card">
+            <div>
+                <div style="font-size: 2.8rem;">🐶</div>
+                <div class="name-title">Tạ Vũ Lương</div>
+                <p style="color: #c2185b; font-weight: bold; margin: 0; font-size: 0.9rem;">💙 Chàng Trai Của Tôi</p>
+            </div>
+            <hr style="margin: 27px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.9);">
+            <div style="font-size: 0.88rem; color: #444; text-align: left;">
+                <p style="margin-bottom: 6px;"><b>🌸 Tên gọi:</b> Anh Yêu 💖</p>
+                <p style="margin: 0;"><b>🌷 Sở thích:</b> Yêu Em, che chở cho Em, tặng hoa mỗi ngày ✨</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with col_heart:
+    st.markdown('<div class="heart-center">💖</div>', unsafe_allow_html=True)
+
+with col2:
+    st.markdown(
+        """
+        <div class="equal-card">
+            <div>
+                <div style="font-size: 2.8rem;">🍅</div>
+                <div class="name-title">Hoàng Thị Thùy Dương</div>
+                <p style="color: #c2185b; font-weight: bold; margin: 0; font-size: 0.9rem;">💗 Cô Gái Nhỏ Dịu Dàng</p>
+            </div>
+            <hr style="margin: 12px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.9);">
+            <div style="font-size: 0.88rem; color: #444; text-align: left;">
+                <p style="margin-bottom: 6px;"><b>🌸 Tên gọi:</b> Cà Chua 💖</p>
+                <p style="margin: 0;"><b>🌻 Sở thích:</b> Được chiều chuộng, thích hoa hồng và trái tim 💌</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown(
+    """
+    <div class="cute-quote">
+        ✨ <i>"Cảm ơn vì giữa hàng tỷ người, chúng ta đã tìm thấy và chọn đồng hành cùng nhau!"</i> ✨
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ==============================================================================
+# 2. BỘ ĐẾM NGÀY BÊN NHAU
+# ==============================================================================
+start_date = datetime(2026, 9, 10)
+today = datetime.now()
+days_together = (today - start_date).days
+
+st.markdown(
+    f"""
+    <div style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(5px); border-radius: 20px; padding: 20px; text-align: center; margin: 20px 0; border: 2px dashed #ff4081;">
+        <h3 style="color: #d63384; margin: 0;">🌸 Ta Đã Bên Nhau 🌸</h3>
+        <h1 style="color: #ff0055; font-size: 3.5rem; margin: 10px 0;">💖 {days_together} 💖</h1>
+        <p style="color: #c2185b; font-family: 'Great Vibes', cursive; font-size: 2rem; margin: 0;">Ngày Hạnh Phúc Trọn Vẹn</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ==============================================================================
+# 3. MỤC TƯƠNG TÁC LỜI NHẮN
+# ==============================================================================
+col_btn1, col_btn2 = st.columns(2, gap="small")
+with col_btn1:
+    if st.button("💌 Bấm để gửi 1000 nụ hôn", use_container_width=True):
+        st.toast("💋 Đã gửi 1000 nụ hôn ngọt ngào đến Cà Chua!", icon="😘")
+with col_btn2:
+    if st.button("🎁 Bấm để ôm Anh Yêu", use_container_width=True):
+        st.toast("🤗 Đã ôm chặt Chú Chó Lương thật ấm áp!", icon="🐶")
+
+st.markdown("<h3 style='color: #b8004f; margin-top: 15px;'>💌 Gửi Lời Nhắn Ngọt Ngào</h3>", unsafe_allow_html=True)
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+with st.form("love_message_form", clear_on_submit=True):
+    sender = st.selectbox("Người gửi:", ["🐶 Chú Chó Lương", "🍅 Cà Chua Dương"])
+    message = st.text_area("Viết lời mật ngọt:", placeholder="Nhập tin nhắn sến rẩm dành cho đối phương...", height=100)
+    submitted = st.form_submit_button("💖 Gửi Lời Nhắn 💖", use_container_width=True)
+
+    if submitted and message.strip() != "":
+        st.session_state.messages.append({
+            "sender": sender,
+            "text": message,
+            "time": datetime.now().strftime("%H:%M - %d/%m/%Y")
+        })
+        st.balloons()
+        st.success(f"Đã gửi lời nhắn từ {sender}! 💖")
+
+if st.session_state.messages:
+    st.markdown("<h4 style='color: #d63384;'>💬 Nhật Ký Lời Nhắn:</h4>", unsafe_allow_html=True)
+    for msg in reversed(st.session_state.messages):
+        st.markdown(
+            f"""
+            <div style="background: rgba(255, 255, 255, 0.7); border-radius: 12px; padding: 12px 18px; margin-bottom: 10px; border-left: 5px solid #ff4081;">
+                <p style="margin: 0; font-weight: bold; color: #b8004f;">{msg['sender']} <span style="font-size: 0.8rem; color: #888; font-weight: normal;">({msg['time']})</span></p>
+                <p style="margin: 5px 0 0 0; color: #333;">{msg['text']}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# Chân trang
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 30px; font-size: 0.85rem; color: #a83262;">
+         Forever Love • Designed with 💖 for Lương & Dương
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ==============================================================================
+# 4. PHÁT NHẠC SOUNDCLOUD TỰ ĐỘNG & LẶP BÀI (DÙNG COMPONENTS.HTML RIÊNG CHUẨN)
+# ==============================================================================
+music_url = "https://soundcloud.com/s-m-sung-s-t/nhac-au-my-hay-nhat-moi-thoi-dai-nhac-tieng-anh-nhe-nhang-sau-lang-thoang-buon-man-mac"
+encoded_url = quote(music_url, safe="")
+
+player_url = (
+    "https://w.soundcloud.com/player/"
+    f"?url={encoded_url}"
+    "&auto_play=true"
+    "&hide_related=true"
+    "&show_comments=false"
+    "&show_user=false"
+    "&show_reposts=false"
+    "&visual=false"
+)
+
+components.html(
+    f"""
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+
+    <div style="width:0;height:0;overflow:hidden;position:absolute;">
+        <iframe
+            id="sc-player"
+            width="100%"
+            height="166"
+            scrolling="no"
+            frameborder="no"
+            allow="autoplay"
+            src="{player_url}">
+        </iframe>
+    </div>
+
+    <script>
+        (function() {{
+            var iframeElement = document.getElementById('sc-player');
+            var widget = SC.Widget(iframeElement);
+
+            widget.bind(SC.Widget.Events.FINISH, function() {{
+                widget.seekTo(0);
+                widget.play();
+            }});
+
+            function enableAutoplay() {{
+                widget.play();
+            }}
+
+            window.addEventListener('click', enableAutoplay, {{ once: true }});
+            window.addEventListener('touchstart', enableAutoplay, {{ once: true }});
+            window.addEventListener('scroll', enableAutoplay, {{ once: true }});
+        }})();
+    </script>
+    """,
+    height=0,
+    width=0
+)
