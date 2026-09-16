@@ -2,8 +2,35 @@ import streamlit as st
 from datetime import datetime
 import streamlit.components.v1 as components
 from urllib.parse import quote
+import json
+import os
 
 st.set_page_config(page_title="Love Story", page_icon="💖", layout="centered")
+
+# ==============================================================================
+# HÀM ĐỌC VÀ GHI DỮ LIỆU LỜI NHẮN (LƯU VĨNH VIỄN VÀO FILE JSON)
+# ==============================================================================
+DB_FILE = "messages.json"
+
+def load_messages():
+    if os.path.exists(DB_FILE):
+        try:
+            with open(DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_message(sender, text):
+    messages = load_messages()
+    new_msg = {
+        "sender": sender,
+        "text": text,
+        "time": datetime.now().strftime("%H:%M - %d/%m/%Y")
+    }
+    messages.append(new_msg)
+    with open(DB_FILE, "w", encoding="utf-8") as f:
+        json.dump(messages, f, ensure_ascii=False, indent=4)
 
 # ==============================================================================
 # CSS GIAO DIỆN & HIỆU ỨNG RƠI
@@ -140,7 +167,7 @@ with col1:
                 <div class="name-title">Tạ Vũ Lương</div>
                 <p style="color: #c2185b; font-weight: bold; margin: 0; font-size: 0.9rem;">💙 Chàng Trai Của Tôi</p>
             </div>
-            <hr style="margin: 27px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.9);">
+            <hr style="margin: 12px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.9);">
             <div style="font-size: 0.88rem; color: #444; text-align: left;">
                 <p style="margin-bottom: 6px;"><b>🌸 Tên gọi:</b> Anh Yêu 💖</p>
                 <p style="margin: 0;"><b>🌷 Sở thích:</b> Yêu Em, che chở cho Em, tặng hoa mỗi ngày ✨</p>
@@ -200,7 +227,7 @@ st.markdown(
 )
 
 # ==============================================================================
-# 3. MỤC TƯƠNG TÁC LỜI NHẮN
+# 3. MỤC TƯƠNG TÁC LỜI NHẮN (ĐÃ TÍCH HỢP LƯU VĨNH VIỄN)
 # ==============================================================================
 col_btn1, col_btn2 = st.columns(2, gap="small")
 with col_btn1:
@@ -212,26 +239,21 @@ with col_btn2:
 
 st.markdown("<h3 style='color: #b8004f; margin-top: 15px;'>💌 Gửi Lời Nhắn Ngọt Ngào</h3>", unsafe_allow_html=True)
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
 with st.form("love_message_form", clear_on_submit=True):
     sender = st.selectbox("Người gửi:", ["🐶 Chú Chó Lương", "🍅 Cà Chua Dương"])
     message = st.text_area("Viết lời mật ngọt:", placeholder="Nhập tin nhắn sến rẩm dành cho đối phương...", height=100)
     submitted = st.form_submit_button("💖 Gửi Lời Nhắn 💖", use_container_width=True)
 
     if submitted and message.strip() != "":
-        st.session_state.messages.append({
-            "sender": sender,
-            "text": message,
-            "time": datetime.now().strftime("%H:%M - %d/%m/%Y")
-        })
+        save_message(sender, message)
         st.balloons()
-        st.success(f"Đã gửi lời nhắn từ {sender}! 💖")
+        st.success(f"Đã lưu lời nhắn từ {sender}! 💖")
 
-if st.session_state.messages:
+# Hiển thị nhật ký lời nhắn từ file JSON
+messages_list = load_messages()
+if messages_list:
     st.markdown("<h4 style='color: #d63384;'>💬 Nhật Ký Lời Nhắn:</h4>", unsafe_allow_html=True)
-    for msg in reversed(st.session_state.messages):
+    for msg in reversed(messages_list):
         st.markdown(
             f"""
             <div style="background: rgba(255, 255, 255, 0.7); border-radius: 12px; padding: 12px 18px; margin-bottom: 10px; border-left: 5px solid #ff4081;">
@@ -253,7 +275,7 @@ st.markdown(
 )
 
 # ==============================================================================
-# 4. PHÁT NHẠC SOUNDCLOUD TỰ ĐỘNG & LẶP BÀI (DÙNG COMPONENTS.HTML RIÊNG CHUẨN)
+# 4. PHÁT NHẠC SOUNDCLOUD TỰ ĐỘNG & LẶP BÀI
 # ==============================================================================
 music_url = "https://soundcloud.com/s-m-sung-s-t/nhac-au-my-hay-nhat-moi-thoi-dai-nhac-tieng-anh-nhe-nhang-sau-lang-thoang-buon-man-mac"
 encoded_url = quote(music_url, safe="")
